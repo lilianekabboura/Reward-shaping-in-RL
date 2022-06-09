@@ -1,10 +1,8 @@
-# Master-thesis
-## Reward Shaping for optimal Exploration in Reinforcement Learning
+# Reward Shaping for optimal Exploration in Reinforcement Learning
+
 A common method to solve the efficiency problem in reinforcement learning is reward shaping, i.e., transforming possible domain knowledge into additional rewards and guiding learning algorithms to learn faster and better by using the combination of the original and the new rewards. 
 
-This thesis aims to find better ways to improve exploration. Special attention is given to reward shaping and the use of domain knowledge through reward shaping. Different reward shaping approaches are introduced and compared. Domain knowledge, potential-based approaches, and curiosity learning are applied to the Acrobot, MountainCar, and LunarLander environments of OpenAI Gym.
-
-How the convergence speed and exploration were affected by using these forms of rewards are compared and analyzed using different types of evaluation.
+In this repository, in addition to Potential Based Reward Shaping (PBRS), several reward shaping techniques are presented and applied.
 
 For training, RL's most popular learning algorithm is used: Deep Q-Network (DQN).
 
