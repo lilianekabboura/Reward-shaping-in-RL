@@ -14,8 +14,7 @@ For training, RL's most popular learning algorithm is used: Deep Q-Network (DQN)
 
 #### First clone the repository and navigate to the project folder
 ```Shell
-  git clone https://github.com/lilianekabboura/Master-thesis.git
-  cd Code
+  git clone https://github.com/lilianekabboura/Reward-shaping-in-RL.git
   ```
 #### Install Dependencies
 ```Shell
