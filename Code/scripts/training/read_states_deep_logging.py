@@ -1,0 +1,127 @@
+
+import os
+import pandas as pd
+from logger_configs.loggers_states import result_logger_2
+import time
+from pprint import pformat
+from statistics import mean, stdev
+
+
+def create_log_files_episode_details_for_stats(env_name, training_method):
+    log_dir = "../storage/DQN_episode_states_for_stats"
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
+    log_dir = log_dir + '/' + env_name + '/'
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    log_dir = log_dir + '/' + env_name + '_' + training_method + '/'
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
+    # get number of log files in log directory
+    run_num = 0
+    current_num_files = next(os.walk(log_dir))[2]
+    run_num = len(current_num_files)
+    # create new log file for each run
+    log_f_name = log_dir + '/DQN_' + env_name + \
+        "_episode_log_states_" + str(run_num) + ".csv"
+
+    print("="*50)
+
+    return log_f_name
+
+
+def states(env_name, training_method, run_num):
+    datalist = []
+    log_dir = "../storage/DQN_episode_deep_logs" + '/' + env_name + '//'+env_name+'_' + training_method + '//' + 'DQN_' + env_name + \
+        "_episode_log_" + str(run_num) + ".csv"
+    time_start = time.time()
+    local_time = time.ctime(time_start)
+    data = pd.read_csv(os.path.join(log_dir))
+    run = []
+    data = pd.DataFrame(data)
+    run.append(data)
+
+    data = data['state'].tolist()
+
+    for value in data:
+        value = value.split()
+        datalist.append(value)
+
+    data_2 = []
+    for v in datalist:
+        v = [float(x) for x in v]
+        data_2.append(v)
+
+    print(*map(mean, zip(*data_2)))
+
+    print(*map(stdev, zip(*data_2)))
+
+    result_logger_2.info("=" * 110)
+    result_logger_2.info("OpenAI Gym Task : {} ".format(env_name))
+    result_logger_2.info("Training_method : {} ".format(training_method))
+    result_logger_2.info("loading data from : {} ".format(log_dir))
+
+    result_logger_2.info(
+        "count of all visited states during trainig : {}".format(len(data)))
+
+    # add two more {} for LunarLander (observations shape is 8)
+    result_logger_2.info("average of the visited states during trainig: {} {} {} {} {} {} ".format(
+        *map(mean, zip(*data_2))))
+    result_logger_2.info("standart deviation of the visited states during trainig: {} {} {} {} {} {}".format(
+        *map(stdev, zip(*data_2))))
+
+    my_dict = {i: data.count(i) for i in data}
+
+    data_after_count = my_dict
+    result_logger_2.info(
+        "count of visited states during training after mapping them together : {} ".format(len(data_after_count)))
+    result_logger_2.info("all visited states : {} ".format(pformat(my_dict)))
+    for key, value in list(data_after_count.items()):
+        if value == 1:
+            del data_after_count[key]
+    result_logger_2.info(
+        "states visited more than once : {} ".format(pformat(data_after_count)))
+    result_logger_2.info("count of states visited more than once : {} ".format(
+        pformat(len(data_after_count))))
+
+    new_data_list = data_after_count
+
+    log_f_name = create_log_files_episode_details_for_stats(
+        env_name, training_method)
+    log_f = open(log_f_name, "w+")
+    log_f.write('state,count\n')
+    data_3 = []
+    for key, value in list(new_data_list.items()):
+        log_f.write('{},{}\n'.format(key, value))
+        data_3.append(key)
+
+    data_4 = []
+    for value in data_3:
+        value = value.split()
+        data_4.append(value)
+
+    data_5 = []
+    for v in data_4:
+        v = [float(x) for x in v]
+        data_5.append(v)
+
+    print(*map(mean, zip(*data_5)))
+    # add two more {} for LunarLander (observations shape is 8)
+    result_logger_2.info("average of the visited states more than once: {} {} {} {} {} {} ".format(
+        *map(mean, zip(*data_5))))
+    result_logger_2.info("standart deviation of the visited states during trainig: {} {} {} {} {} {}".format(
+        *map(stdev, zip(*data_5))))
+
+    # log_f.close()
+    os.rename("results_states/result_states_logs.log", "results_states/result_states_log_{}_{}.log".format(
+        env_name, local_time))
+
+
+if __name__ == '__main__':
+
+    envs = ['Acrobot-v1', 'MountainCar-v0', 'LunarLander-v2']
+    training_method = ['epsilon_greedy', 'greedy',
+                       'GBRS', 'MixIn', 'DPBRS', 'PBRS', 'ICM']
+    states(envs[0], training_method[3], 0)
